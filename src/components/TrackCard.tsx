@@ -7,6 +7,7 @@ import { usePlayer } from '@/lib/player-context';
 import { formatDuration, formatPlays } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface TrackCardProps {
   track: Track;
@@ -22,7 +23,25 @@ export function TrackCard({ track, variant = 'grid', index }: TrackCardProps) {
   const isPlayingThis = isCurrentTrack && isPlaying;
   const liked = isLiked(track.id || track._id || '');
 
-  const handlePlay = () => {
+  const handlePlay = async () => {
+    // Check if wallet is connected before playing
+    if (typeof window !== 'undefined' && (window as any).ethereum) {
+      try {
+        const accounts = await (window as any).ethereum.request({ 
+          method: 'eth_accounts' 
+        });
+        
+        if (!accounts || accounts.length === 0) {
+          toast.warning('Wallet required', {
+            description: 'Please connect your wallet to play music.',
+          });
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking wallet:', error);
+      }
+    }
+    
     if (isCurrentTrack) {
       togglePlay();
     } else {
@@ -134,8 +153,12 @@ export function TrackCard({ track, variant = 'grid', index }: TrackCardProps) {
       <div className="relative aspect-square rounded-md overflow-hidden mb-4 shadow-lg">
         <img
           src={track.coverUrl}
-          alt={track.title}
+          alt={`${track.title} by ${track.artist}`}
           className="w-full h-full object-cover"
+          loading="lazy"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300/1DB954/ffffff?text=Music';
+          }}
         />
         <motion.div
           initial={{ opacity: 0 }}

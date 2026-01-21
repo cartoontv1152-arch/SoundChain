@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { TrackCard } from '@/components/TrackCard';
 import Link from 'next/link';
 import { Track } from '@/lib/types';
+import { toast } from 'sonner';
 
 const genres = ['Electronic', 'Hip-Hop', 'Pop', 'Rock', 'Jazz', 'Classical', 'R&B', 'Country', 'Reggae', 'Metal'];
 
@@ -27,6 +28,9 @@ export default function Home() {
         setRecentTracks(recentData.tracks || []);
       } catch (error) {
         console.error('Error fetching tracks:', error);
+        toast.error('Failed to load tracks', {
+          description: 'Please refresh the page to try again.',
+        });
       } finally {
         setLoading(false);
       }
@@ -42,6 +46,10 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1DB954]/20 via-transparent to-transparent" />
         
         <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/40 to-transparent" />
+        
+        {/* Decorative elements */}
+        <div className="absolute top-20 right-20 w-72 h-72 bg-[#1DB954]/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-[#1DB954]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -59,25 +67,34 @@ export default function Home() {
             <span className="text-sm text-white/90">Powered by Blockchain</span>
           </motion.div>
 
-          <h1 className="text-6xl font-bold text-white mb-4 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
             Music Streaming,
             <br />
             <span className="text-[#1DB954]">Decentralized</span>
           </h1>
           
-          <p className="text-xl text-[#b3b3b3] mb-8 max-w-xl">
+          <p className="text-lg sm:text-xl text-[#b3b3b3] mb-8 max-w-xl">
             Stream unlimited music. Support artists directly with crypto payments. 
             Own your favorites as NFTs.
           </p>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <Link href="/discover">
               <Button 
                 size="lg" 
-                className="bg-[#1DB954] hover:bg-[#1ed760] text-black font-semibold px-8 h-14 text-lg rounded-full"
+                className="bg-[#1DB954] hover:bg-[#1ed760] text-black font-semibold px-8 h-14 text-lg rounded-full shadow-lg hover:shadow-[#1DB954]/50 transition-all"
               >
                 <Play className="w-5 h-5 mr-2 fill-current" />
                 Explore Music
+              </Button>
+            </Link>
+            <Link href="/dashboard">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="border-white/20 hover:bg-white/10 text-white font-semibold px-8 h-14 text-lg rounded-full backdrop-blur-sm"
+              >
+                Dashboard
               </Button>
             </Link>
           </div>
@@ -98,7 +115,7 @@ export default function Home() {
           initial={{ opacity: 0, x: 100 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="absolute right-8 top-1/2 -translate-y-1/2 hidden xl:block"
+          className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:block"
         >
           <div className="relative">
             <div className="w-80 h-80 rounded-2xl overflow-hidden shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-500">
@@ -220,7 +237,7 @@ export default function Home() {
         )}
       </section>
 
-      <section className="px-8 py-16">
+      <section className="px-4 sm:px-8 py-16">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}

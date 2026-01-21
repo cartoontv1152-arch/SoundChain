@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { TrackCard } from '@/components/TrackCard';
 import { Track } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const genres = ['Electronic', 'Hip-Hop', 'Pop', 'Rock', 'Jazz', 'Classical', 'R&B', 'Country', 'Reggae', 'Metal'];
 
@@ -30,6 +31,9 @@ export default function DiscoverPage() {
         setTracks(data.tracks || []);
       } catch (error) {
         console.error('Error fetching tracks:', error);
+        toast.error('Failed to load tracks', {
+          description: 'Please try again later.',
+        });
       } finally {
         setLoading(false);
       }
@@ -50,9 +54,9 @@ export default function DiscoverPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="sticky top-0 z-20 bg-gradient-to-b from-[#121212] via-[#121212] to-transparent pb-6 pt-6 px-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-white">Discover</h1>
+      <div className="sticky top-0 z-20 bg-gradient-to-b from-[#121212] via-[#121212] to-transparent pb-6 pt-6 px-4 sm:px-8">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Discover</h1>
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -75,12 +79,13 @@ export default function DiscoverPage() {
 
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#b3b3b3]" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#b3b3b3]" aria-hidden="true" />
             <Input
               placeholder="Search tracks, artists..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 h-12 bg-[#282828] border-0 text-white placeholder:text-[#b3b3b3] rounded-full focus-visible:ring-[#1DB954]"
+              aria-label="Search for tracks and artists"
             />
             {searchQuery && (
               <button
@@ -124,7 +129,7 @@ export default function DiscoverPage() {
         </div>
       </div>
 
-      <div className="px-8 pb-8">
+      <div className="px-4 sm:px-8 pb-8">
         {loading ? (
           <div className={cn(
             viewMode === 'grid' 

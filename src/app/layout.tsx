@@ -5,6 +5,7 @@ import { VisualEditsMessenger } from "orchids-visual-edits";
 import { Sidebar } from "@/components/Sidebar";
 import { Player } from "@/components/Player";
 import { PlayerProvider } from "@/lib/player-context";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +18,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SoundChain - Decentralized Music Streaming",
-  description: "Stream music, support artists directly with crypto payments",
+  title: "SoundChain - Decentralized Music Streaming on Polygon",
+  description: "Stream unlimited music on Polygon blockchain. Support artists directly with crypto payments. Own your favorites as NFTs. Powered by IPFS and Web3.",
+  keywords: ["music streaming", "blockchain", "Polygon", "NFT", "Web3", "decentralized", "crypto", "music"],
+  authors: [{ name: "SoundChain" }],
+  openGraph: {
+    title: "SoundChain - Decentralized Music Streaming",
+    description: "Stream unlimited music. Support artists directly with crypto payments.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -40,6 +48,7 @@ export default function RootLayout({
             <Player />
           </div>
         </PlayerProvider>
+        <Toaster position="top-right" richColors />
         <VisualEditsMessenger />
       </body>
     </html>

@@ -106,7 +106,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const playTrack = (track: Track) => {
     if (audioRef.current) {
       audioRef.current.src = track.audioUrl;
-      audioRef.current.play().catch(console.error);
+      audioRef.current.play().catch((error) => {
+        console.error('Error playing track:', error);
+        setState(prev => ({ ...prev, isPlaying: false }));
+      });
       setState(prev => ({
         ...prev,
         currentTrack: track,
@@ -120,10 +123,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (audioRef.current && state.currentTrack) {
       if (state.isPlaying) {
         audioRef.current.pause();
+        setState(prev => ({ ...prev, isPlaying: false }));
       } else {
-        audioRef.current.play().catch(console.error);
+        audioRef.current.play().catch((error) => {
+          console.error('Error playing track:', error);
+          setState(prev => ({ ...prev, isPlaying: false }));
+        });
+        setState(prev => ({ ...prev, isPlaying: true }));
       }
-      setState(prev => ({ ...prev, isPlaying: !prev.isPlaying }));
     }
   };
 

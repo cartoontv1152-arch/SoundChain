@@ -21,6 +21,7 @@ import { usePlayer } from '@/lib/player-context';
 import { formatDuration } from '@/lib/mock-data';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export function Player() {
   const {
@@ -57,15 +58,17 @@ export function Player() {
     const trackId = currentTrack.id || currentTrack._id || '';
     if (liked) {
       removeLikedTrack(trackId);
+      toast.success('Removed from liked songs');
     } else {
       addLikedTrack(trackId);
+      toast.success('Added to liked songs');
     }
   };
 
   if (!currentTrack) {
     return (
       <div className="fixed bottom-0 left-0 right-0 h-[90px] bg-gradient-to-t from-black via-[#181818] to-[#181818] border-t border-white/5 flex items-center justify-center">
-        <p className="text-[#b3b3b3] text-sm">Select a track to start playing</p>
+        <p className="text-[#b3b3b3] text-sm px-4 text-center">Select a track to start playing</p>
       </div>
     );
   }
@@ -77,7 +80,7 @@ export function Player() {
         animate={{ y: 0 }}
         className="fixed bottom-0 left-0 right-0 h-[90px] bg-gradient-to-t from-black via-[#181818] to-[#181818] border-t border-white/5 px-4 flex items-center z-50"
       >
-        <div className="flex items-center gap-4 w-[30%] min-w-[180px]">
+        <div className="flex items-center gap-4 w-[30%] min-w-[180px] max-w-[30%]">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -85,8 +88,12 @@ export function Player() {
           >
             <img
               src={currentTrack.coverUrl}
-              alt={currentTrack.title}
+              alt={`${currentTrack.title} by ${currentTrack.artist}`}
               className="w-full h-full object-cover"
+              loading="eager"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300/1DB954/ffffff?text=Music';
+              }}
             />
             {isPlaying && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/40">
@@ -198,7 +205,7 @@ export function Player() {
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 w-[30%] min-w-[180px]">
+        <div className="flex items-center justify-end gap-3 w-[30%] min-w-[180px] max-w-[30%]">
           <button className="p-2 text-[#b3b3b3] hover:text-white transition-colors flex-shrink-0">
             <Mic2 className="w-4 h-4" />
           </button>
@@ -261,8 +268,12 @@ export function Player() {
                 <motion.div className="relative mb-8">
                   <img
                     src={currentTrack.coverUrl}
-                    alt={currentTrack.title}
-                    className="w-[450px] h-[450px] rounded-2xl shadow-2xl"
+                    alt={`${currentTrack.title} by ${currentTrack.artist}`}
+                    className="w-full max-w-[450px] h-[450px] rounded-2xl shadow-2xl object-cover mx-auto"
+                    loading="eager"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/450/1DB954/ffffff?text=Music';
+                    }}
                   />
                   {isPlaying && (
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-2xl" />

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { BecomeArtistDialog } from './BecomeArtistDialog';
+import { toast } from 'sonner';
 
 const navItems = [
   { icon: Home, label: 'Home', href: '/' },
@@ -78,25 +79,57 @@ export function Sidebar() {
         const accounts = await (window as any).ethereum.request({ 
           method: 'eth_requestAccounts' 
         });
+        
+        if (!accounts || accounts.length === 0) {
+          toast.error('No accounts found', {
+            description: 'Please unlock your wallet and try again.',
+          });
+          return;
+        }
+        
         setWalletAddress(accounts[0]);
         
-        await fetch('/api/users', {
+        const response = await fetch('/api/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ walletAddress: accounts[0] }),
         });
-      } catch (error) {
+        
+        if (!response.ok) {
+          throw new Error('Failed to create user');
+        }
+        
+        toast.success('Wallet connected', {
+          description: `Connected to ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
+        });
+      } catch (error: any) {
         console.error('Error connecting wallet:', error);
-        alert('Failed to connect wallet');
+        if (error.code === 4001) {
+          toast.error('Connection rejected', {
+            description: 'Please approve the connection request in your wallet.',
+          });
+        } else {
+          toast.error('Failed to connect wallet', {
+            description: error.message || 'Please try again later.',
+          });
+        }
       }
     } else {
-      alert('Please install MetaMask or another Web3 wallet');
+      toast.error('Web3 wallet not found', {
+        description: 'Please install MetaMask or another Web3 wallet to continue.',
+        action: {
+          label: 'Get MetaMask',
+          onClick: () => window.open('https://metamask.io', '_blank'),
+        },
+      });
     }
   };
 
   const handleBecomeArtist = () => {
     if (!walletAddress) {
-      alert('Please connect your wallet first');
+      toast.warning('Wallet required', {
+        description: 'Please connect your wallet first to become an artist.',
+      });
       return;
     }
     setShowArtistDialog(true);
@@ -113,6 +146,7 @@ export function Sidebar() {
           paddingLeft: isCollapsed ? '0.5rem' : '0.75rem',
           paddingRight: isCollapsed ? '0.5rem' : '0.75rem',
         }}
+        aria-label="Navigation sidebar"
       >
         <div className="p-6 flex items-center justify-between">
           <AnimatePresence mode="wait">
@@ -151,6 +185,7 @@ export function Sidebar() {
           className="absolute -right-3 top-24 w-6 h-6 bg-[#282828] hover:bg-[#1DB954] border border-white/10 rounded-full flex items-center justify-center text-white hover:text-black transition-all z-50 cursor-pointer group"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           <motion.div
             animate={{ rotate: isCollapsed ? 180 : 0 }}
