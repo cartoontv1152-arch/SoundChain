@@ -55,7 +55,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 h-full flex flex-col justify-center px-8 max-w-4xl"
+          className="relative z-10 h-full flex flex-col justify-center px-4 sm:px-8 max-w-4xl"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
