@@ -315,6 +315,13 @@ export function Sidebar() {
       <style jsx global>{`
         main {
           margin-left: var(--sidebar-width, 256px) !important;
+          transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @media (max-width: 768px) {
+          main {
+            margin-left: 0 !important;
+          }
         }
       `}</style>
 
