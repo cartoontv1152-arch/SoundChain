@@ -4,6 +4,18 @@ import { injected } from 'wagmi/connectors';
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '';
 
+export const polygonMainnet = defineChain({
+  id: 137,
+  name: 'Polygon',
+  nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+  rpcUrls: {
+    default: { http: ['https://polygon-rpc.com'] },
+  },
+  blockExplorers: {
+    default: { name: 'PolygonScan', url: 'https://polygonscan.com' },
+  },
+});
+
 export const polygonAmoy = defineChain({
   id: 80002,
   name: 'Polygon Amoy',
@@ -18,11 +30,12 @@ export const polygonAmoy = defineChain({
 });
 
 export const config = createConfig({
-  chains: [polygonAmoy],
+  chains: [polygonMainnet, polygonAmoy],
   connectors: [
     injected(),
   ],
   transports: {
+    [polygonMainnet.id]: http(process.env.NEXT_PUBLIC_POLYGON_MAINNET_RPC || 'https://polygon-rpc.com'),
     [polygonAmoy.id]: http(process.env.NEXT_PUBLIC_POLYGON_AMOY_RPC || 'https://rpc-amoy.polygon.technology'),
   },
   ssr: true,

@@ -1,14 +1,20 @@
 import axios from 'axios';
 import FormData from 'form-data';
 
-const PINATA_API_KEY = process.env.PINATA_API_KEY!;
-const PINATA_SECRET_KEY = process.env.PINATA_SECRET_KEY!;
+// Use PINATA_API_KEY and PINATA_SECRET_API_KEY (matches NEXT_PUBLIC_* naming).
+// Fallback to NEXT_PUBLIC_* for backward compatibility.
+const PINATA_API_KEY = process.env.PINATA_API_KEY || process.env.NEXT_PUBLIC_PINATA_API_KEY || '';
+const PINATA_SECRET_API_KEY = process.env.PINATA_SECRET_API_KEY || process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY || '';
+
+if (!PINATA_API_KEY || !PINATA_SECRET_API_KEY) {
+  console.warn('Pinata: PINATA_API_KEY and PINATA_SECRET_API_KEY (or NEXT_PUBLIC_* equivalents) must be set for IPFS uploads.');
+}
 
 const pinataClient = axios.create({
   baseURL: 'https://api.pinata.cloud',
   headers: {
     pinata_api_key: PINATA_API_KEY,
-    pinata_secret_api_key: PINATA_SECRET_KEY,
+    pinata_secret_api_key: PINATA_SECRET_API_KEY,
   },
 });
 

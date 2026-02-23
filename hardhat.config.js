@@ -17,6 +17,11 @@ export default {
       url: process.env.POLYGON_AMOY_RPC || "https://rpc-amoy.polygon.technology",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 80002
+    },
+    polygonMainnet: {
+      url: process.env.POLYGON_MAINNET_RPC || "https://polygon-mainnet.g.alchemy.com/v2/your-api-key",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 137
     }
   },
   paths: {

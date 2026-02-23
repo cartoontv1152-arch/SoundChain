@@ -2,12 +2,25 @@
 
 A revolutionary blockchain-powered music streaming platform that enables artists to upload, monetize, and earn directly from their music while fans enjoy decentralized streaming with cryptocurrency payments.
 
+
+live url - https://soundchainny.vercel.app/
+
 ![SoundChain](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?logo=mongodb)
-![Polygon](https://img.shields.io/badge/Polygon-Amoy-8247E5?logo=polygon)
+![Polygon](https://img.shields.io/badge/Polygon-Mainnet-8247E5?logo=polygon)
 ![IPFS](https://img.shields.io/badge/IPFS-Pinata-65C2CB?logo=ipfs)
 
 ## Update in this Wave
+
+### Polygon Mainnet Deployment
+- Added **polygonMainnet** network to Hardhat configs (root + contracts-deploy)
+- Created `contracts-deploy/scripts/deploy-mainnet.mjs` — deploys all 4 contracts (MusicNFT, StreamingPayment, Subscription, SoundChainV2) with real USDC (`0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359`)
+- Updated `src/lib/web3-config.ts` — added Polygon mainnet chain (Chain ID 137) as default; frontend now supports both mainnet and Amoy testnet
+- Added `DEPLOYMENT.md` — step-by-step mainnet deployment guide with prerequisites, env vars, and troubleshooting
+
+### Pinata & Environment Fixes
+- Fixed `src/lib/pinata.ts` — now supports both `PINATA_API_KEY`/`PINATA_SECRET_KEY` and `NEXT_PUBLIC_PINATA_*` for backward compatibility
+- Added `NEXT_PUBLIC_POLYGON_MAINNET_RPC` for client-side wagmi when using mainnet
 
 ### Wagmi & Web3 Stack Overhaul
 - Downgraded from **wagmi v3** (unstable) to **wagmi v2.14.16** with matching **@wagmi/core v2.16.7** and **viem v2.21.58** for full compatibility
@@ -43,7 +56,21 @@ A revolutionary blockchain-powered music streaming platform that enables artists
 - Added `skipLibCheck: true` and explicit `types` array in `tsconfig.json` to resolve phantom `@types/minimatch` errors
 - Full `tsc --noEmit` passes with zero errors
 
-### Deployed Smart Contract Addresses (Polygon Amoy Testnet)
+### Deployed Smart Contract Addresses
+
+**Polygon Mainnet** (Chain ID: 137)
+
+| Contract | Address |
+|---|---|
+| **MusicNFT** | `0x9A2c340294254599d47F219159ED2ee960BfbBAE` |
+| **StreamingPayment** | `0x05D456964a9E665404701F2f0389A1E46f3Bd470` |
+| **Subscription** | `0xD1F7b387f0f56eB29fbD05D94fa809f697239093` |
+| **SoundChain V2** | `0x4212aAB48ab6E95c1809522583E77Fd16815b960` |
+| **USDC Token** | `0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359` (Circle native) |
+
+> View on [PolygonScan](https://polygonscan.com/).
+
+**Polygon Amoy Testnet** (Chain ID: 80002)
 
 | Contract | Address |
 |---|---|
@@ -53,7 +80,7 @@ A revolutionary blockchain-powered music streaming platform that enables artists
 | **USDC Token** | `0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582` |
 | **SoundChain V2** | `0x33DD3D9f255E610e17cE840628B96f0E6C921417` |
 
-> All contracts are deployed on **Polygon Amoy Testnet** (Chain ID: 80002). View on [Amoy PolygonScan](https://amoy.polygonscan.com/).
+> View on [Amoy PolygonScan](https://amoy.polygonscan.com/).
 
 ---
 
@@ -83,7 +110,7 @@ SoundChain is a fully decentralized music streaming platform that revolutionizes
 
 - **⛓️ Blockchain Integration**
   - ERC-721 NFT standard for music tracks
-  - Polygon Amoy testnet for fast, low-cost transactions
+  - Polygon mainnet and Amoy testnet support
   - Transparent on-chain payment records
   - Smart contract-based royalty distribution
 
@@ -201,19 +228,24 @@ Create `.env` file with:
 # MongoDB
 MONGODB_URI=mongodb+srv://...
 
-# Pinata IPFS
+# Pinata IPFS (matches NEXT_PUBLIC_PINATA_* naming)
 PINATA_API_KEY=your_api_key
-PINATA_SECRET_KEY=your_secret_key
+PINATA_SECRET_API_KEY=your_secret_key
 
-# Polygon Amoy
+# Polygon Amoy (testnet)
 POLYGON_AMOY_RPC=https://polygon-amoy.g.alchemy.com/v2/...
+
+# Polygon Mainnet
+POLYGON_MAINNET_RPC=https://polygon-mainnet.g.alchemy.com/v2/...
+NEXT_PUBLIC_POLYGON_MAINNET_RPC=https://polygon-mainnet.g.alchemy.com/v2/...
 PRIVATE_KEY=your_wallet_private_key
 
-# Smart Contracts (Deployed on Polygon Amoy)
-NEXT_PUBLIC_MUSIC_NFT_ADDRESS=0xb14505dF2954DdE7a0509C06F220d09b8EAC66Ae
-NEXT_PUBLIC_STREAMING_PAYMENT_ADDRESS=0x04Dd347E800228Adb52B69D01d4643556d6AF219
-NEXT_PUBLIC_SUBSCRIPTION_ADDRESS=0x712C3ed71019464A35ebD2A5FDF8AE2f7C2DAa3A
-NEXT_PUBLIC_USDC_ADDRESS=0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582
+# Smart Contracts (set after deployment - see DEPLOYMENT.md)
+NEXT_PUBLIC_MUSIC_NFT_ADDRESS=0x...
+NEXT_PUBLIC_STREAMING_PAYMENT_ADDRESS=0x...
+NEXT_PUBLIC_SUBSCRIPTION_ADDRESS=0x...
+NEXT_PUBLIC_SOUNDCHAIN_V2_ADDRESS=0x...
+NEXT_PUBLIC_USDC_ADDRESS=0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359
 
 # WalletConnect
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id
@@ -326,7 +358,15 @@ This tests all 16 endpoints including:
 
 ## 🛠️ Smart Contract Deployment
 
-To deploy contracts to Polygon Amoy:
+**Polygon Mainnet** (recommended for production):
+
+```bash
+cd contracts-deploy
+npm install
+npm run deploy:mainnet
+```
+
+**Polygon Amoy** (testnet):
 
 ```bash
 cd contracts-deploy
@@ -334,7 +374,7 @@ bun install
 bunx hardhat run scripts/deploy.mjs --network polygonAmoy
 ```
 
-See `DEPLOYMENT.md` for detailed instructions.
+See `DEPLOYMENT.md` for detailed instructions, prerequisites, and troubleshooting.
 
 ## 📊 Database Schema
 
@@ -355,7 +395,7 @@ See `DEPLOYMENT.md` for detailed instructions.
 - [x] MongoDB data storage
 - [x] Smart contract deployment
 - [x] SideShift withdrawal integration
-- [ ] Mainnet deployment (Polygon)
+- [x] Mainnet deployment (Polygon)
 - [ ] Mobile app (React Native)
 - [ ] Social features (comments, shares)
 - [ ] Live streaming support
@@ -372,9 +412,10 @@ MIT License - see LICENSE file for details.
 
 ## 🔗 Links
 
-- **Documentation**: See `USER_GUIDE.md`, `IMPLEMENTATION_SUMMARY.md`
+- **Documentation**: See `USER_GUIDE.md`, `IMPLEMENTATION_SUMMARY.md`, `DEPLOYMENT.md`
 - **Smart Contracts**: `contracts/` directory
 - **API Tests**: `test-api.ps1`
+- **Polygon Mainnet Explorer**: https://polygonscan.com/
 - **Polygon Amoy Explorer**: https://amoy.polygonscan.com/
 
 ## 💬 Support

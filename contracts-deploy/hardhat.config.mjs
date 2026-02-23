@@ -1,9 +1,12 @@
-import '@nomicfoundation/hardhat-toolbox';
+import '@nomicfoundation/hardhat-ethers';
 import { config } from 'dotenv';
-import { resolve } from 'path';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Load .env from parent directory
-config({ path: resolve('../.env') });
+config({ path: resolve(__dirname, '../.env') });
 
 /** @type import('hardhat/config').HardhatUserConfig */
 export default {
@@ -21,10 +24,18 @@ export default {
       url: process.env.POLYGON_AMOY_RPC || "https://rpc-amoy.polygon.technology",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 80002
+    },
+    polygonMainnet: {
+      url: process.env.POLYGON_MAINNET_RPC || "https://polygon-mainnet.g.alchemy.com/v2/your-api-key",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 137
     }
   },
+  etherscan: {
+    apiKey: { polygon: process.env.POLYGONSCAN_API_KEY || "" },
+  },
   paths: {
-    sources: "../contracts",
+    sources: "./contracts",
     tests: "./test",
     cache: "./cache",
     artifacts: "./artifacts"
